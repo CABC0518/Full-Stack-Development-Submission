@@ -8,6 +8,7 @@ const App = () => {
   ]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [newFilter, setNewFilter] = useState(true)
 
   const handleNewChange = (event) => {
     console.log("event target: ",event.target)
