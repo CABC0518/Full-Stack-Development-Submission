@@ -8,6 +8,11 @@ const App = () => {
   ]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [newSearch, setNewSearch] = useState('')
+
+  handleSearch = (event)=> {
+
+  }
 
   const handleNewChange = (event) => {
     console.log("event target: ",event.target)
@@ -36,6 +41,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      Filter shown with <input value={} onChange={}></input>
       <form onSubmit={addPerson}>
         <div>
           name: <input value={newName} onChange={handleNewChange} />
