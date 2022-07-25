@@ -7,51 +7,82 @@ const Part = ({ part }) =>
     {part.name} {part.exercises}
   </p>
 
-const Content = ({ parts }) => 
-  <>
-    <Part
-      part={parts[0]} 
-    />
-    <Part
-      part={parts[1]} 
-    />
-    <Part
-      part={parts[2]} 
-    />      
-  </>
+const Content = ({ parts }) =>{
+  return(
+    <div>
+      {parts.map(part =>
+          <Part key={part.id} part={part}/>
+        )}
+    </div>
+  )
+}
 
   const Course = ({course, parts}) =>{
+    const initialValue = 0
+    const total = parts.reduce((s, p)=> s + p.exercises, initialValue)
     return(
       <>
       <Header course={course}/>
       <Content parts={parts}/>
+      <Total sum={total}/>
     </>
     )
   }
 
 const App = () => {
-  const course = 'Half Stack application development'
-  const initialValue = 0
-  const parts = [
+  const courses = [
     {
-      name: 'Fundamentals of React',
-      exercises: 10
-    },
+      name: 'Half Stack application development',
+      id: 1,
+      parts: [
+        {
+          name: 'Fundamentals of React',
+          exercises: 10,
+          id: 1
+        },
+        {
+          name: 'Using props to pass data',
+          exercises: 7,
+          id: 2
+        },
+        {
+          name: 'State of a component',
+          exercises: 14,
+          id: 3
+        },
+        {
+          name: 'Redux',
+          exercises: 11,
+          id: 4
+        }
+      ]
+    }, 
     {
-      name: 'Using props to pass data',
-      exercises: 7
-    },
-    {
-      name: 'State of a component',
-      exercises: 14
+      name: 'Node.js',
+      id: 2,
+      parts: [
+        {
+          name: 'Routing',
+          exercises: 3,
+          id: 1
+        },
+        {
+          name: 'Middlewares',
+          exercises: 7,
+          id: 2
+        }
+      ]
     }
   ]
-  const total = parts.reduce((s, p)=> s + p.exercises, initialValue)
+
 
   return (
     <div>
-      <Course course={course} parts={parts} />
-      <Total sum={total} />
+        {
+          courses.map(course =>
+           <Course key={course.id} course={course.name} parts={course.parts}/>
+          )
+        }
     </div>
   )
 }
