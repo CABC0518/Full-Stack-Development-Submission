@@ -31,6 +31,7 @@ const Content = ({ parts }) =>
 
 const App = () => {
   const course = 'Half Stack application development'
+  const initialValue = 0
   const parts = [
     {
       name: 'Fundamentals of React',
@@ -45,11 +46,12 @@ const App = () => {
       exercises: 14
     }
   ]
+  const total = parts.reduce((s, p)=> s + p.exercises, initialValue)
 
   return (
     <div>
       <Course course={course} parts={parts} />
-      <Total sum={parts[0].exercises + parts[1].exercises + parts[2].exercises} />
+      <Total sum={total} />
     </div>
   )
 }
