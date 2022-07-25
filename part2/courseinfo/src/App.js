@@ -20,6 +20,15 @@ const Content = ({ parts }) =>
     />      
   </>
 
+  const Course = ({course, parts}) =>{
+    return(
+      <>
+      <Header course={course}/>
+      <Content parts={parts}/>
+    </>
+    )
+  }
+
 const App = () => {
   const course = 'Half Stack application development'
   const parts = [
@@ -39,8 +48,7 @@ const App = () => {
 
   return (
     <div>
-      <Header course={course} />
-      <Content parts={parts} />
+      <Course course={course} parts={parts} />
       <Total sum={parts[0].exercises + parts[1].exercises + parts[2].exercises} />
     </div>
   )
