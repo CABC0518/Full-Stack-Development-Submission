@@ -1,24 +1,47 @@
-import { useState } from 'react'
+const Header = ({ course }) => <h1>{course}</h1>
+
+const Total = ({ sum }) => <p>Number of exercises {sum}</p>
+
+const Part = ({ part }) => 
+  <p>
+    {part.name} {part.exercises}
+  </p>
+
+const Content = ({ parts }) => 
+  <>
+    <Part
+      part={parts[0]} 
+    />
+    <Part
+      part={parts[1]} 
+    />
+    <Part
+      part={parts[2]} 
+    />      
+  </>
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
-  ]) 
-  const [newName, setNewName] = useState('')
+  const course = 'Half Stack application development'
+  const parts = [
+    {
+      name: 'Fundamentals of React',
+      exercises: 10
+    },
+    {
+      name: 'Using props to pass data',
+      exercises: 7
+    },
+    {
+      name: 'State of a component',
+      exercises: 14
+    }
+  ]
 
   return (
     <div>
-      <h2>Phonebook</h2>
-      <form>
-        <div>
-          name: <input />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      ...
+      <Header course={course} />
+      <Content parts={parts} />
+      <Total sum={parts[0].exercises + parts[1].exercises + parts[2].exercises} />
     </div>
   )
 }
