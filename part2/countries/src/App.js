@@ -9,15 +9,9 @@ const Search = ({handleSearch, userInput}) => {
   )
 }
 
-const Countries = ({countriesToShow}) =>{
-  if(countriesToShow.length > 10){
-    return(
-      <p>Too many matches, specify another filter</p>
-    )
-  }else if(countriesToShow.length === 1){
-    const onlyCountry = countriesToShow[0]
-    return(
-      <>
+const CountryInfo = ({onlyCountry}) =>{
+  return(
+    <>
         <h1>{onlyCountry.name.official}</h1>
         <br></br>
         <p>Capital: {onlyCountry.capital[0]}</p>
@@ -26,17 +20,33 @@ const Countries = ({countriesToShow}) =>{
         <ul>
         {Object.values(onlyCountry.languages).map(lang => <li key={lang}>{lang}</li>)}
         </ul>
-        <img src={onlyCountry.flags.png}></img>
-      </>
+        <img src={onlyCountry.flags.png}></img></>
+  )
+}
 
+const Countries = ({countriesToShow}) =>{
+  const buttonClicked = (e)=>{
+    console.log(e)
+  }
+  if(countriesToShow.length > 10){
+    return(
+      <p>Too many matches, specify another filter</p>
+    )
+  }else if(countriesToShow.length === 1){
+    
+    return(
+      <CountryInfo onlyCountry={countriesToShow[0]}/>
     )
   }else{
     return(
       <div>
         {
           countriesToShow.map(
-            country => <p key={country.name.official}>{country.name.official}</p>
-          )
+            country => 
+            <form key={country.name.official}>{country.name.official} 
+              <button onClicked={buttonClicked}>View</button>
+            </form>  
+           )
         }
       </div>
     )
@@ -70,6 +80,7 @@ const App = ()=>{
       )
     )
    }
+
   return(
     <div>
       <p>*Use an official name of a country to search</p>
