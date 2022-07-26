@@ -24,9 +24,15 @@ const CountryInfo = ({onlyCountry}) =>{
   )
 }
 
-const Countries = ({countriesToShow}) =>{
+const Countries = ({countriesToShow, setShow, show}) =>{
+  
   const buttonClicked = (e)=>{
-    console.log(e)
+  setShow(Array(countriesToShow.length).fill(false))
+  let copy = [...show]
+  copy[e.target.value] = true
+  setShow(copy)
+  
+    
   }
   if(countriesToShow.length > 10){
     return(
@@ -42,10 +48,34 @@ const Countries = ({countriesToShow}) =>{
       <div>
         {
           countriesToShow.map(
-            country => 
-            <form key={country.name.official}>{country.name.official} 
+            (country, index) => {
+              if(show[index] === true){
+                return(
+                <>
+                  <p key={country.name.official}>{country.name.official} 
+                <button key={index} onClick={buttonClicked}>View</button>
+                </p>  
+                <CountryInfo onlyCountry={country}/>
+                </>
+                  )
+              }else{
+                return(
+                  <>
+                  <p key={country.name.official}>{country.name.official} 
+                <button value={index} onClick={buttonClicked}>View</button>
+                </p>  
+                </>
+                )
+              }
+              <p key={country.name.official}>{country.name.official} 
               <button onClicked={buttonClicked}>View</button>
-            </form>  
+              </p>  
+
+              return <></>
+              
+            
+            }
+
            )
         }
       </div>
@@ -55,6 +85,7 @@ const Countries = ({countriesToShow}) =>{
 // country.name.official 
 
 const App = ()=>{
+  const [show, setShow] = useState([])
   const [userInput, setUserInput] = useState('')
   const [countries, setCountries] = useState([])
   const [countriesToShow, setCountriesToShow] = useState([])
@@ -79,13 +110,17 @@ const App = ()=>{
          country.name.official.toLowerCase().includes(e.target.value.toLowerCase())
       )
     )
+    setShow(Array(countriesToShow.length).fill(false))
+    console.log(countriesToShow.length)
+
+
    }
 
   return(
     <div>
       <p>*Use an official name of a country to search</p>
       <Search userInput={userInput} handleSearch={handleSearch}/>
-      <Countries countriesToShow={countriesToShow} />
+      <Countries countriesToShow={countriesToShow} show={show} setShow={setShow}/>
     </div>
   )
 }
