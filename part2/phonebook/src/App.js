@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import personService from './service/persons'
 
 const Filter = ({newSearch, handleSearch}) => {
   return(
@@ -40,13 +41,13 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [newSearch, setNewSearch] = useState('')
+  const baseURL = "http://localhost:3001/persons"
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
+    console.log("servive: ", personService)
+    personService
+      .getAll()
       .then(response => {
-        console.log('promise fulfilled')
         setPersons(response.data)
       })
   }, [])
@@ -73,7 +74,6 @@ const App = () => {
 
 
   const addPerson = (event) => {
-    console.log("value", event.target.value)
     event.preventDefault()
     const namearr = persons.map(person => person.name)
     if(namearr.includes(newName)){
@@ -83,9 +83,14 @@ const App = () => {
       const newPerson = {
         name: newName,
         number: newNumber,
-        id: persons.length + 1,
       }
-      setPersons(persons.concat(newPerson))
+      personService
+      .create(newPerson)
+      .then(response =>{
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
     }
   }
 
