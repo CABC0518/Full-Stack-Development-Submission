@@ -26,13 +26,31 @@ const PersonForm = ({addPerson, newName, handleNewChange, newNumber, handleNumbe
   )
 }
 
-const Persons = ({personsToShow}) =>{
+const Persons = ({personsToShow, setPersons}) =>{
+  // confimation for deletion and get the latest phonebook infos after the deletion
+  const deleteClicked = (e) =>{
+    if(window.confirm('Do you really want to delete it?')){
+      personService
+      .deletePerson(e.target.id)
+      .then(response =>{
+        console.log(response)
+        return personService.getAll()
+      })
+      .then(response =>{
+        setPersons(response.data)
+      })
+    }
+  }
   return(
     personsToShow.map(person =>
-      <p key={person.name}>{person.name} {person.number}</p>  
+          <p key={person.id}>{person.name} {person.number}  
+          <Button id={person.id} deleteClicked={deleteClicked}/>
+          </p>
     )
   )
 }
+
+const Button = ({id, deleteClicked}) => <button id={id} onClick={deleteClicked}>delete</button>
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -43,6 +61,7 @@ const App = () => {
   const [newSearch, setNewSearch] = useState('')
   const baseURL = "http://localhost:3001/persons"
 
+  // get all phonebook info from a server
   useEffect(() => {
     console.log("servive: ", personService)
     personService
@@ -74,10 +93,29 @@ const App = () => {
 
 
   const addPerson = (event) => {
+    const updateOldInfo = (persons, personService) =>{
+      let originalPerson = persons.filter(person => person.name === newName)[0]
+      originalPerson.name = newName
+      originalPerson.number = newNumber
+      personService
+      .update(originalPerson.id, originalPerson)
+      .then(response =>{
+        console.log(response)
+        return personService.getAll()
+      })
+      .then(response =>{
+        setPersons(response.data)
+      })
+    }
     event.preventDefault()
+    // retrieve only names from Person objects and make a new array
     const namearr = persons.map(person => person.name)
+    // check if a name is already in the phonebook and if it exists, proceed to the next
     if(namearr.includes(newName)){
-      alert(`${newName} already exisits in phonebook`)
+      if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
+        updateOldInfo(persons, personService)
+        
+      }
     }else{
       console.log('button clicked', newName)
       const newPerson = {
@@ -95,6 +133,7 @@ const App = () => {
   }
 
 
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -108,7 +147,8 @@ const App = () => {
       handleNumberChange = {handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} />
+      <Persons personsToShow={personsToShow} setPersons={setPersons}/> 
+      
     </div>
   )
 }
