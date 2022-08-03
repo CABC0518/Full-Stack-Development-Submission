@@ -28,8 +28,7 @@ const PersonForm = ({addPerson, newName, handleNewChange, newNumber, handleNumbe
 const Notificaiton = ({successMessage, messageStatus, errorMessage}) =>{
   if (messageStatus === null) {
     return null
-  }
-  if(messageStatus === 'error'){
+  }else if(messageStatus === 'error'){
     console.log('error message shown')
     return(
       <div className={messageStatus}>
@@ -45,27 +44,32 @@ const Notificaiton = ({successMessage, messageStatus, errorMessage}) =>{
 
 }
 
-const Persons = ({personsToShow, setPersons, setErrorMessage, setMessageStatus}) =>{
+const Persons = ({personsToShow, setPersons, setErrorMessage, setMessageStatus, setSuccessMessage}) =>{
   // confimation for deletion and get the latest phonebook infos after the deletion
   const deleteClicked = (e) =>{
     const tmpPersonName = personsToShow.filter(p => p.id == e.target.id)[0].name
     if(window.confirm('Do you really want to delete it?')){
       personService
       .deletePerson(e.target.id)
-      .catch(error => {
-        console.log('caught an error')
-        setErrorMessage(`Information of ${tmpPersonName} has been removed from server`)
-        setMessageStatus('error')
-        setTimeout(() => {
-          setMessageStatus(null)
-        }, 5000)
-      })
       .then(response =>{
         console.log(response)
         return personService.getAll()
       })
       .then(response =>{
         setPersons(response.data)
+        setMessageStatus('success')
+        setSuccessMessage(`${tmpPersonName} has successfully been removed`)
+        setTimeout(() => {
+          setMessageStatus(null)
+        }, 5000)
+      })
+      .catch(error => {
+        console.log('caught an error')
+        setErrorMessage(`Information of ${tmpPersonName} has been already removed from server`)
+        setMessageStatus('error')
+        setTimeout(() => {
+          setMessageStatus(null)
+        }, 5000)
       })
     }
   }
@@ -191,6 +195,7 @@ const App = () => {
       messageStatus={messageStatus} 
       setErrorMessage={setErrorMessage}
       setMessageStatus={setMessageStatus}
+      setSuccessMessage={setSuccessMessage}
       /> 
       
     </div>
