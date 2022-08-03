@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import personService from './service/persons'
+import './main.css'
 
 const Filter = ({newSearch, handleSearch}) => {
   return(
@@ -24,6 +24,17 @@ const PersonForm = ({addPerson, newName, handleNewChange, newNumber, handleNumbe
     </div>
   </form>
   )
+}
+const Notificaiton = ({message}) =>{
+  if (message === null) {
+    return null
+  }
+      return (
+        <div className='success'>
+        {message}
+      </div>
+      )
+
 }
 
 const Persons = ({personsToShow, setPersons}) =>{
@@ -59,7 +70,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [newSearch, setNewSearch] = useState('')
-  const baseURL = "http://localhost:3001/persons"
+  const [successMessage, setSuccessMessage] = useState(null)
+ 
 
   // get all phonebook info from a server
   useEffect(() => {
@@ -105,6 +117,7 @@ const App = () => {
       })
       .then(response =>{
         setPersons(response.data)
+ 
       })
     }
     event.preventDefault()
@@ -126,6 +139,10 @@ const App = () => {
       .create(newPerson)
       .then(response =>{
         setPersons(persons.concat(response.data))
+        setSuccessMessage(`added ${newName}`)
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
         setNewName('')
         setNewNumber('')
       })
@@ -137,6 +154,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notificaiton message={successMessage}/>
       <Filter newSearch={newSearch} handleSearch={handleSearch}/>
       <h1>Add a new</h1>
       <PersonForm 
