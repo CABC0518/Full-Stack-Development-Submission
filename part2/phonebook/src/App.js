@@ -25,24 +25,41 @@ const PersonForm = ({addPerson, newName, handleNewChange, newNumber, handleNumbe
   </form>
   )
 }
-const Notificaiton = ({message}) =>{
-  if (message === null) {
+const Notificaiton = ({successMessage, messageStatus, errorMessage}) =>{
+  if (messageStatus === null) {
     return null
   }
-      return (
-        <div className='success'>
-        {message}
+  if(messageStatus === 'error'){
+    console.log('error message shown')
+    return(
+      <div className={messageStatus}>
+      {errorMessage}
+    </div>
+    )
+  }
+  return (
+      <div className={messageStatus}>
+        {successMessage}
       </div>
       )
 
 }
 
-const Persons = ({personsToShow, setPersons}) =>{
+const Persons = ({personsToShow, setPersons, setErrorMessage, setMessageStatus}) =>{
   // confimation for deletion and get the latest phonebook infos after the deletion
   const deleteClicked = (e) =>{
+    const tmpPersonName = personsToShow.filter(p => p.id == e.target.id)[0].name
     if(window.confirm('Do you really want to delete it?')){
       personService
       .deletePerson(e.target.id)
+      .catch(error => {
+        console.log('caught an error')
+        setErrorMessage(`Information of ${tmpPersonName} has been removed from server`)
+        setMessageStatus('error')
+        setTimeout(() => {
+          setMessageStatus(null)
+        }, 5000)
+      })
       .then(response =>{
         console.log(response)
         return personService.getAll()
@@ -71,6 +88,8 @@ const App = () => {
   const [showAll, setShowAll] = useState(true)
   const [newSearch, setNewSearch] = useState('')
   const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [messageStatus, setMessageStatus] = useState(null)
  
 
   // get all phonebook info from a server
@@ -140,8 +159,9 @@ const App = () => {
       .then(response =>{
         setPersons(persons.concat(response.data))
         setSuccessMessage(`added ${newName}`)
+        setMessageStatus('success')
         setTimeout(() => {
-          setSuccessMessage(null)
+          setMessageStatus(null)
         }, 5000)
         setNewName('')
         setNewNumber('')
@@ -154,7 +174,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notificaiton message={successMessage}/>
+      <Notificaiton successMessage={successMessage} messageStatus={messageStatus}  errorMessage={errorMessage}/>
       <Filter newSearch={newSearch} handleSearch={handleSearch}/>
       <h1>Add a new</h1>
       <PersonForm 
@@ -165,7 +185,13 @@ const App = () => {
       handleNumberChange = {handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} setPersons={setPersons}/> 
+      <Persons 
+      personsToShow={personsToShow} 
+      setPersons={setPersons} 
+      messageStatus={messageStatus} 
+      setErrorMessage={setErrorMessage}
+      setMessageStatus={setMessageStatus}
+      /> 
       
     </div>
   )
